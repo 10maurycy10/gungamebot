@@ -5,7 +5,7 @@ const msgpack = require("msgpack-lite")
 function mkinput() {
 	input = new Object();
 	input.left = false;
-	input.rigth = false;
+	input.right = false;
 	input.down = false;
 	input.up = false;
 	input.shift = false;
@@ -30,9 +30,10 @@ function bot(config, state) {
 	var that = Object.create({
 		run: run,
 		connection,
+		mkinput: mkinput,
 		state,
 		send: send,
-		initpkt: (that) => ({join: true, name: "bot", armor: "0"}),
+		initpkt: (that) => ({join: true, name: "bot", armor: "0", weapon: "Pistol"}),
 		closed: false
 	})
 
@@ -48,8 +49,8 @@ function bot(config, state) {
 
 	// Helpful function for sending data
 	function send(obj) {
-		console.log(obj)
-		ws.sendUTF(JSON.stringify(obj))
+		var bytes = msgpack.encode(obj)
+		ws.sendBytes(bytes)
 	}
 
 	function run() {
@@ -59,21 +60,20 @@ function bot(config, state) {
 			that.ws = ws;
 			console.log("Connected.");
 			
-			send(that.initpkt(that) || {join: true, name: "bot", armor: "0"});
+			send(that.initpkt(that));
 
 			ticker = setInterval(tick, deltaTick*1000);
 			pinger = setInterval(ping,250);
 
 			connection_handle.on('message', function(message) {
-				data = JSON.parse(message.utf8Data)
-				handle_message(data)
+				var obj = msgpack.decode(message.binaryData)
+				handle_message(obj)
 			});
 			
 			connection_handle.on("close", () => {
 				that.closed = true;
 				clearTimeout(ticker)
 				clearTimeout(pinger)
-				console.log("closed")
 			})
 			if (that.init) {
 				that.init(that)
