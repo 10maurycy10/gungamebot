@@ -28,11 +28,14 @@ function aimbot(config, state) {
 			let dy = target_player.y - self_player.y;
 
 			let angle = Math.atan2(dy,dx);
-
-			if (loadtick > (config.cooldown ?? 10)){
+			
+			// Cooldown is not checked, so we can fire as often as we want
+			if (loadtick > (config.cooldown ?? 5)){
 				that.send({
 					angle: angle, 
 					shoot: true, 
+					// Where do you want the bullet to appear?
+					// Inside of the enemy of course!
 					cx: target_player.x,
 					cy: target_player.y
 				})
@@ -57,7 +60,6 @@ function aimbot(config, state) {
 		
 		for (playerid of players.keys()) {
 			if (playerid !== that.connection.selfId) {
-				console.log("Checking ", playerid, " Self ", that.connection.selfId)
 				var player = players.get(playerid);
 				var dx = pself.x - player.x;
 				var dy = pself.x - player.x;

@@ -50,7 +50,6 @@ function aimbot(config, state) {
 		
 		for (playerid of players.keys()) {
 			if (playerid !== that.connection.selfId) {
-				console.log("Checking ", playerid, " Self ", that.connection.selfId)
 				var player = players.get(playerid);
 				var dx = pself.x - player.x;
 				var dy = pself.x - player.x;
