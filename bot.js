@@ -17,7 +17,8 @@ deltaTick  = 1/60
 function mkconnection() {
 	return Object.create({
 		seldId: null,
-		currentTick: null
+		currentTick: null,
+		players: new Map()
 	})
 }
 
@@ -40,7 +41,22 @@ function bot(config, state) {
 	function handle_message(obj) {
 		if (obj.selfId !== undefined) {
 			console.log("Know self.")
+			config.botids.push(obj.selfId)
 			connection.selfId = obj.selfId	
+		}
+		if (obj.serverPayload) {
+			handled = true;
+			that.connection.currentTick = obj.serverPayload.tick;
+		}
+		if (obj.changePack) {
+			handled = true;
+			for (idx in obj.changePack) {
+				let newstate = obj.changePack[idx]
+				that.connection.players.set(newstate.id, newstate)
+			}
+		}
+		if (obj.removePlayer) {
+			that.connection.players.remove(obj.removePlayer)
 		}
 		if (that.onrx) {
 			that.onrx(that, obj)
