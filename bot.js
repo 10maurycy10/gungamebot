@@ -33,7 +33,7 @@ function bot(config, state) {
 		mkinput: mkinput,
 		state,
 		send: send,
-		initpkt: (that) => ({join: true, name: "bot", armor: "0", weapon: "Pistol"}),
+		initpkt: (that) => ({join: true, name: "bot", armor: "2", weapon: "Pistol"}),
 		closed: false
 	})
 
@@ -43,7 +43,7 @@ function bot(config, state) {
 			connection.selfId = obj.selfId	
 		}
 		if (that.onrx) {
-			that.onrx(that)
+			that.onrx(that, obj)
 		}
 	}
 
